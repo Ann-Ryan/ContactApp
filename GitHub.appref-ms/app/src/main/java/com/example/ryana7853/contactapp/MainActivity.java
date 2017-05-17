@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -60,27 +61,12 @@ public class MainActivity extends AppCompatActivity {
     public void addData (View v){
         boolean isInserted = myDb.insertData(editName.getText().toString(), editNumber.getText().toString(), editEmail.getText().toString());
         if(isInserted){
-            //create toast method to user indicating data inserted correctly
             Log.d("MyContact", "Data insertion successful!");
-            String message = "SUCCESS!";
-            int duration  = Toast.LENGTH_SHORT;
-            Context context = getApplicationContext();
-           // Toast toast = new Toast(this, message, duration);
-           Toast t = new Toast(context);
-            t.setDuration(duration);
-            t.setText(message);
-            t.show();
+            Toast.makeText(getApplicationContext(), "SUCCESS!",  Toast.LENGTH_SHORT).show();
         }
         else{
-            //create toast method to user indicating data inserted incorrectly!
             Log.d("MyContact", "Data insertion unsuccessful!");
-            String message = "FAILURE!";
-            int duration  = Toast.LENGTH_SHORT;
-            Context context = getApplicationContext();
-            Toast t = new Toast(context);
-            t.setText(message);
-            t.setDuration(duration);
-            t.show();
+            Toast.makeText(getApplicationContext(), "FAILURE!",  Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -88,17 +74,50 @@ public class MainActivity extends AppCompatActivity {
         Cursor res = myDb.getAllData();
         if(res.getCount() == 0){
             showMessage("Error", "No data found in database");
-            //put a log.d message and toast
             Log.d("MyContact", "No data found in database!");
+            Toast.makeText(getApplicationContext(), "No data found in database!!", Toast.LENGTH_SHORT).show();
+            return;
         }
+
         StringBuffer buffer = new StringBuffer();
-        //set up while loop with curser moveToNext method
-        //append each col to buffer
-        //use getString method
+        while (res.moveToNext()){
+            buffer.append("ID " + res.getString(0) + "\n");
+            buffer.append("NAME " + res.getString(1) + "\n");
+            buffer.append("NUMBER " + res.getString(2) + "\n");
+            buffer.append("EMAIL " + res.getString(3) + "\n");
+        }
+
         showMessage("Data", buffer.toString());
     }
 
     public void showMessage(String title, String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.show();
+    }
 
+    public void findData(){
+        Log.d("MyContact", "Trying...");
+        Cursor res = myDb.getAllData();
+        boolean isPresent = false;
+       // StringBuffer buffer = new StringBuffer();
+        while(res.moveToNext()){
+            if(res.getString(1).equals(editName.getText().toString())){
+                Log.d("MyContact", "Contact found!");
+               // buffer.append("ID " + res.getString(0) + "\n");
+               // buffer.append("NAME " + res.getString(1) + "\n");
+               // buffer.append("NUMBER " + res.getString(2) + "\n");
+               // buffer.append("EMAIL " + res.getString(3) + "\n");
+               // showMessage("Data found: ", buffer.toString());
+                isPresent = true;
+                break;
+            }
+        }
+        if(!isPresent){
+            Log.d("MyContact", "Not found");
+            Toast.makeText(getApplicationContext(), "Data not found.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

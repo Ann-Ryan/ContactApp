@@ -21,12 +21,12 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public static final String COL_4 = "EMAIL";
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 2);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, NUMBER TEXT, EMAIL TEXT)");
 
     }
 
@@ -40,47 +40,15 @@ public class DatabaseHelper extends SQLiteOpenHelper
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, name);
+        contentValues.put(COL_3, number);
+        contentValues.put(COL_4, email);
 
         Log.d("MyContact", String.valueOf(contentValues.valueSet()));
         long result = db.insert(TABLE_NAME, null, contentValues);
         Log.d("MyContact", String.valueOf(result));
         if(result == -1) return false;
 
-        contentValues.put(COL_3, number);
-
-        Log.d("MyContact", String.valueOf(contentValues.valueSet()));
-        result = db.insert(TABLE_NAME, null, contentValues);
-        Log.d("MyContact", String.valueOf(result));
-        if(result == -1) return false;
-
-        contentValues.put(COL_4, email);
-
-        Log.d("MyContact", String.valueOf(contentValues.valueSet()));
-        result = db.insert(TABLE_NAME, null, contentValues);
-        Log.d("MyContact", String.valueOf(result));
-        if(result == -1) return false;
-
-
-        /*
-        contentValues.put(COL_2, name);
-        Log.d("MyContact", String.valueOf(contentValues.valueSet()));
-        long result = db.insert(TABLE_NAME, null, contentValues);
-        Log.d("MyContact", String.valueOf(result));
-        if(result == -1) return false;
-        contentValues.put(COL_3, number);
-        Log.d("MyContact", String.valueOf(contentValues.valueSet()));
-        long result2 = db.insert(TABLE_NAME, null, contentValues);
-        Log.d("MyContact", String.valueOf(result2));
-        //this is the part that returns negative one and fails
-         if(result2 == -1) return false;
-        contentValues.put(COL_4, email);
-        Log.d("MyContact", String.valueOf(contentValues.valueSet()));
-        long result3 = db.insert(TABLE_NAME, null, contentValues);
-        Log.d("MyContact", String.valueOf(result3));
-        if(result3 == -1) return false;
-        */
-
-        return true;
+        else return true;
 
     }
 
