@@ -98,26 +98,46 @@ public class MainActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void findData(){
+    public void findData(View view){
+
+        //use raw query method
+        //helper call
+
         Log.d("MyContact", "Trying...");
         Cursor res = myDb.getAllData();
+
+        String name = editName.getText().toString();
+
+       // Cursor res = myDb.getReadableDatabase().rawQuery(name, null);
+
+        if(res.getCount() == 0){
+            showMessage("Error", "No data found in database");
+            Log.d("MyContact", "No data found in database!");
+            Toast.makeText(getApplicationContext(), "No data found in database!!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         boolean isPresent = false;
-       // StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
         while(res.moveToNext()){
-            if(res.getString(1).equals(editName.getText().toString())){
+            if(name.equalsIgnoreCase(res.getString(1))){
                 Log.d("MyContact", "Contact found!");
-               // buffer.append("ID " + res.getString(0) + "\n");
-               // buffer.append("NAME " + res.getString(1) + "\n");
-               // buffer.append("NUMBER " + res.getString(2) + "\n");
-               // buffer.append("EMAIL " + res.getString(3) + "\n");
-               // showMessage("Data found: ", buffer.toString());
-                isPresent = true;
-                break;
+                Toast.makeText(getApplicationContext(), "Successfully found contact!", Toast.LENGTH_SHORT).show();
+                buffer.append("ID " + res.getString(0) + "\n");
+                buffer.append("NAME " + res.getString(1) + "\n");
+                buffer.append("NUMBER " + res.getString(2) + "\n");
+                buffer.append("EMAIL " + res.getString(3) + "\n");
+                showMessage("Data found: ", buffer.toString());
+
+               // break;
+               return;
             }
         }
         if(!isPresent){
             Log.d("MyContact", "Not found");
             Toast.makeText(getApplicationContext(), "Data not found.", Toast.LENGTH_SHORT).show();
         }
+
     }
 }
