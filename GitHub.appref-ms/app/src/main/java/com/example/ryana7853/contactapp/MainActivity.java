@@ -1,6 +1,7 @@
 package com.example.ryana7853.contactapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     EditText editNumber;
     EditText editEmail;
     Button btnAddData;
+    public static final String EXTRA_MESSAGE = "hello world";
 
 
     @Override
@@ -100,26 +102,12 @@ public class MainActivity extends AppCompatActivity {
 
     public void findData(View view){
 
-        //use raw query method
-        //helper call
-
         Log.d("MyContact", "Trying...");
         Cursor res = myDb.getAllData();
-
         String name = editName.getText().toString();
-
-       // Cursor res = myDb.getReadableDatabase().rawQuery(name, null);
-
-        if(res.getCount() == 0){
-            showMessage("Error", "No data found in database");
-            Log.d("MyContact", "No data found in database!");
-            Toast.makeText(getApplicationContext(), "No data found in database!!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        StringBuffer buffer = new StringBuffer();
 
         boolean isPresent = false;
-        StringBuffer buffer = new StringBuffer();
         while(res.moveToNext()){
             if(name.equalsIgnoreCase(res.getString(1))){
                 Log.d("MyContact", "Contact found!");
@@ -128,16 +116,47 @@ public class MainActivity extends AppCompatActivity {
                 buffer.append("NAME " + res.getString(1) + "\n");
                 buffer.append("NUMBER " + res.getString(2) + "\n");
                 buffer.append("EMAIL " + res.getString(3) + "\n");
-                showMessage("Data found: ", buffer.toString());
-
-               // break;
-               return;
+               isPresent = true;
             }
         }
-        if(!isPresent){
+        if(!isPresent) {
             Log.d("MyContact", "Not found");
             Toast.makeText(getApplicationContext(), "Data not found.", Toast.LENGTH_SHORT).show();
         }
+        if(isPresent){
+            showMessage("Data found: ", buffer.toString());
+        }
 
     }
+
+    public void searchTool(View view){
+
+        Cursor res = myDb.getAllData();
+        String name = editName.getText().toString();
+        StringBuffer buffer = new StringBuffer();
+
+        boolean isPresent = false;
+        while(res.moveToNext()){
+            if(name.equalsIgnoreCase(res.getString(1))){
+                Log.d("MyContact", "Contact found!");
+                Toast.makeText(getApplicationContext(), "Successfully found contact!", Toast.LENGTH_SHORT).show();
+                buffer.append("ID " + res.getString(0) + "\n");
+                buffer.append("NAME " + res.getString(1) + "\n");
+                buffer.append("NUMBER " + res.getString(2) + "\n");
+                buffer.append("EMAIL " + res.getString(3) + "\n");
+                isPresent = true;
+            }
+        }
+        if(!isPresent) {
+            Log.d("MyContact", "Not found");
+            Toast.makeText(getApplicationContext(), "Data not found.", Toast.LENGTH_SHORT).show();
+        }
+        if(isPresent) {
+            String message = buffer.toString();
+            Intent intent = new Intent(this, DisplayMessageActivity.class);
+            intent.putExtra(EXTRA_MESSAGE, message);
+            startActivity(intent);
+        }
+    }
+
 }
